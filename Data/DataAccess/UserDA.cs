@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Data.IDataAccess;
 using Data.Messages;
 using Data.Models;
+using System.Data.Entity;
 
 namespace Data.DataAccess
 {
@@ -17,30 +18,16 @@ namespace Data.DataAccess
             _contex = new DefaultConnection();
         }
 
-        public Message<List<UserModel>> SelectUsers()
+        public Message<List<User>> SelectUsers()
         {
-            Message<List<UserModel>> result = new Message<List<UserModel>>();
+            Message<List<User>> result = new Message<List<User>>();
 
             try
             {
-                List<UserModel> data = new List<UserModel>();
-
                 var users = _contex.Users.ToList();
 
-                foreach (var user in users)
-                {
-                    data.Add(new UserModel
-                    {
-                        Id = user.Id,
-                        Name = user.Name,
-                        Email = user.Email,
-                        Phone = user.Phone,
-                        Birthdate = user.Birthdate
-                    });
-                }
-
                 result.IsSucceed = true;
-                result.Data = data;
+                result.Data = users;
 
                 return result;
 
@@ -53,6 +40,92 @@ namespace Data.DataAccess
 
                 return result;
             }
+        }
+        public Message<User> GetUser(Guid userId)
+        {
+            Message<User> result = new Message<User>();
+
+            try
+            {
+                var user = _contex.Users.FirstOrDefault(x => x.Id == userId);
+
+                result.IsSucceed = true;
+                result.Data = user;
+            }
+            catch(Exception ex)
+            {
+                result.IsSucceed = false;
+                result.Message = ex.Message.ToString();
+                result.Data = null;
+            }
+
+            return result;
+        }
+        public Message<Guid?> AddUser(User user)
+        {
+            Message<Guid?> result = new Message<Guid?>();
+
+            try
+            {
+                //_contex.Entry(user).State = EntityState.Added;
+                _contex.Users.Add(user);
+                _contex.SaveChanges();
+
+                result.IsSucceed = true;
+                result.Data = user.Id;
+            }
+            catch(Exception ex)
+            {
+                result.IsSucceed = false;
+                result.Message = ex.Message.ToString();
+                result.Data = null;
+            }
+
+            return result;
+        }
+        public Message<Guid> UpdateUser(User user)
+        {
+            Message<Guid?> result = new Message<Guid?>();
+
+            try
+            {
+                //_contex.Entry(user).State = EntityState.Modified;
+                _contex.Users.Attach(user);               
+                _contex.SaveChanges();
+
+                result.IsSucceed = true;
+                result.Data = user.Id;
+            }
+            catch (Exception ex)
+            {
+                result.IsSucceed = false;
+                result.Message = ex.Message.ToString();
+                result.Data = null;
+            }
+
+            return result;
+        }
+        public Message<Guid> DeleteUser(User user)
+        {
+            Message<Guid> result = new Message<Guid>();
+
+            try
+            {
+                //_contex.Entry(user).State = EntityState.Deleted;
+                _contex.Users.Remove(user);               
+                _contex.SaveChanges();
+
+                result.IsSucceed = true;
+                result.Data = user.Id;
+            }
+            catch(Exception ex)
+            {
+                result.IsSucceed = false;
+                result.Message = ex.Message.ToString();
+                result.Data = user.Id;
+            }
+
+            return result;
         }
     }
 }

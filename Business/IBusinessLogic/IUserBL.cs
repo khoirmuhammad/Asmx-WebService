@@ -11,5 +11,8 @@ namespace Business.IBusinessLogic
     public interface IUserBL
     {
         Message<List<UserModel>> SelectUsers();
+        Message<UserModel> GetUser(Guid userId);
+        Message<Guid> SaveUser(UserModel userModel);
+        Message<Guid> DeleteUser(Guid userId);
     }
 }

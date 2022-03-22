@@ -10,6 +10,10 @@ namespace Data.IDataAccess
 {
     public interface IUserDA
     {
-        Message<List<UserModel>> SelectUsers();
+        Message<List<User>> SelectUsers();
+        Message<User> GetUser(Guid userId);
+        Message<Guid?> AddUser(User user);
+        Message<Guid> UpdateUser(User user);
+        Message<Guid> DeleteUser(User user);
     }
 }

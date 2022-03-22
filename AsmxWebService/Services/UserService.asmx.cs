@@ -32,5 +32,23 @@ namespace AsmxWebService.Services
         {
             return _user.SelectUsers();
         }
+
+        [WebMethod]
+        public Message<UserModel> GetUser(Guid userId)
+        {
+            return _user.GetUser(userId);
+        }
+
+        [WebMethod]
+        public Message<Guid> SaveUser(UserModel userModel)
+        {
+            return _user.SaveUser(userModel);
+        }
+
+        [WebMethod]
+        public Message<Guid> DeleteUser(Guid userId)
+        {
+            return _user.DeleteUser(userId);
+        }
     }
 }
